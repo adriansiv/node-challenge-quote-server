@@ -18,12 +18,25 @@ app.get("/", function (request, response) {
 });
 
 //START OF YOUR CODE...
+
+// returns all the quotes
+app.get("/quotes", (req, res) => {
+  res.send(`All the quotes: ${JSON.stringify(quotes)}`);
+});
+
+// returns a random quote
 app.get("/quotes/random", (req, res) => {
   res.send(pickFromArray(quotes));
 });
 
-app.get("/quotes", (req, res) => {
-  res.send(quotes);
+// search for a quote with the word passed in the query parameter "term";
+
+app.get("/quotes/search", (req, res) => {
+  let term = req.query.term;
+  
+  let matches = findQuotesContainingTerm(quotes, term);
+
+  res.send(matches);
 });
 //...END OF YOUR CODE
 
@@ -33,6 +46,17 @@ app.get("/quotes", (req, res) => {
 //
 function pickFromArray(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function findQuotesContainingTerm(quotes, term) {
+  let results = [];
+
+  quotes.forEach(item => {
+    if (item.quote.toLowerCase().includes(term.toLowerCase()) || item.author.toLowerCase().includes(term.toLowerCase())){
+      results.push(item);
+    }
+  })
+  return results;
 }
 
 //Start our server so that it listens for HTTP requests!
